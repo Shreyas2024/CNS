@@ -1,0 +1,36 @@
+def power(base, exponent, modulus):
+    if exponent == 0:
+        return 1
+    if exponent % 2 == 0:
+        half_pow = power(base, exponent // 2, modulus)
+        return (half_pow * half_pow) % modulus
+    else:
+        return (base * power(base, exponent - 1, modulus)) % modulus
+
+# p and g are chosen such that p is Primitive root modulo g
+p = int(input("Prime number (p): "))
+g = int(input("Primitive root (g): "))
+
+privateA = int(input("Alice's private key (a): "))
+privateB = int(input("Bob's private key (b): "))
+
+publicA = power(g, privateA, p)
+publicB = power(g, privateB, p)
+
+print("\nPublicly exchanged values:")
+print("Alice sends:", publicA)
+print("Bob sends:", publicB)
+
+interceptedA = int(input("\n--MITM Attack--\nEnter intercepted value sent by Alice: "))
+interceptedB = int(input("Enter intercepted value sent by Bob: "))
+
+sharedSecretA = power(interceptedB, privateA, p)
+sharedSecretB = power(interceptedA, privateB, p)
+
+print("\nShared Secret Key calculated by the Attacker:")
+print("Shared Secret Key for Alice:", sharedSecretA)
+print("Shared Secret Key for Bob:", sharedSecretB)
+if sharedSecretA==sharedSecretB:
+    print("Communication is Secured")
+else :
+    print("MITM Attack successful!")
